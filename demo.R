@@ -9,9 +9,11 @@ library(retimer) #devtools::install_github("abeith/retimer")
 # Extract Pitch Tier
 praatSys(paste("D03_maths_extract", "audio", "\\"))
 
-# Do nothing (rename D03_maths_extract.PitchTier)
+# Resynthesise without changing anything to compare later
 file.copy("./outputs/D03_maths_extract.PitchTier", "./outputs/D03_maths_extract_reSynth.PitchTier")
 praatSys(paste("D03_maths_extract", "reSynth", "/"), "reSynthPitch.praat")
+
+## Manipulations
 
 # Resynthesise with flat F0 at peak frequency (default)
 flatF0("D03_maths_extract")
@@ -25,10 +27,13 @@ convertAudio("D03_maths_extract")
 # With quarter F0 range
 convertAudio("D03_maths_extract", 0.25)
 
-# With inverted melody: Doesn't work
+# With inverted melody
 convertAudio("D03_maths_extract", -1)
 
+# Factor = 1: Should be the same as first resynthesis
 convertAudio("D03_maths_extract", 1)
+
+## Checks
 
 # Check synthesis: Extract Pitch Tiers from all wav files
 list.files("./outputs", pattern = "D03_maths.*wav") %>%
@@ -59,7 +64,8 @@ pt.compare("./outputs", "D03") %>%
   theme(panel.grid.minor.x = element_blank()) +
   facet_grid(id ~ .)
 
-# Compare densities
+
+## Compare plots for original and resynthesis without manipulation
 pt.compare("./outputs", "D03_maths_extract") %>%
   filter(str_detect(id, "extract$|extract_1$|reSynth")) %>%
   mutate(tone = freqToTones(f, 440)) %>%
